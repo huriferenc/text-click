@@ -41,10 +41,6 @@ def detect_text():
                             [i], data['width'][i], data['height'][i])
 
             start = (x, y)
-            #!! end = (x + w, y + h)
-
-            #!! # Draw box
-            #!! cv2.rectangle(image_marked, start, end, (0, 255, 0), 2)
 
             if x < click_position[0]:
                 click_position = start
@@ -58,20 +54,6 @@ def detect_text():
     # Next text
     TEXT_INDEX = (TEXT_INDEX+1) % len(TEXT_TO_FIND)
 
-    #!! # Save images
-    #!! cv2.imwrite('desktop.png', image)
-    #!! cv2.imwrite('desktop_gray.png', gray_image)
-    #!! cv2.imwrite('desktop_marked.png', image_marked)
-
-    #!! # Display images
-    #!! cv2.imshow("desktop", image)
-    #!! cv2.imshow("desktop_gray", gray_image)
-    #!! cv2.imshow("desktop_marked", image_marked)
-
-    #!! # Close images
-    #!! cv2.waitKey(0)
-    #!! cv2.destroyAllWindows()
-
 
 def is_integer(string):
     try:
@@ -83,18 +65,6 @@ def is_integer(string):
 
 def main():
     global TEXT_TO_FIND, TEXT_INDEX, SLEEP_TIME_SECONDS
-
-    # Specify text
-    # if len(sys.argv) > 1:
-    #     if is_integer(sys.argv[1]):
-    #         SLEEP_TIME_SECONDS = int(sys.argv[1])
-    #         if len(sys.argv[2:]) > 0:
-    #             TEXT_TO_FIND = sys.argv[2:]
-    #     else:
-    #         TEXT_TO_FIND = sys.argv[1:]
-    # else:
-    #     print("No text provided!")
-    #     # exit()
 
     with open("text.txt", "r") as f:
         line = f.readline().rstrip()
