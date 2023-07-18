@@ -16,20 +16,18 @@ TEXT_INDEX = 0
 
 
 def detect_text():
-    global TEXT_TO_FIND, TEXT_INDEX
-
-    # Képernyő felbontásának lekérése
+    # Get screen resolution
     screen_width, screen_height = pyautogui.size()
 
-    # Képernyő képének létrehozása
+    # Create screenshot of the screen
     screenshot = pyautogui.screenshot()
 
-    # Képernyő képének konvertálása OpenCV formátumba
+    # Convert screenshot to OpenCV format
     image = cv2.cvtColor(np.array(screenshot), cv2.COLOR_RGB2BGR)
 
     gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
-    # Szöveg felismerése a képen
+    # Recognize text in the image
     data = pytesseract.image_to_data(gray_image, output_type='dict')
 
     boxNum = len(data['level'])
@@ -53,24 +51,24 @@ def detect_text():
 
             is_found = True
 
-    # Kattintás a szövegre
+    # Click on the text
     if is_found:
         pyautogui.click(x=click_position[0], y=click_position[1])
 
-    # Következő szöveg
+    # Next text
     TEXT_INDEX = (TEXT_INDEX+1) % len(TEXT_TO_FIND)
 
-    #!! Képek mentése
+    #!! # Save images
     #!! cv2.imwrite('desktop.png', image)
     #!! cv2.imwrite('desktop_gray.png', gray_image)
     #!! cv2.imwrite('desktop_marked.png', image_marked)
 
-    #!! Képek megjelenítése
+    #!! # Display images
     #!! cv2.imshow("desktop", image)
     #!! cv2.imshow("desktop_gray", gray_image)
     #!! cv2.imshow("desktop_marked", image_marked)
 
-    #!! # Képek bezárása
+    #!! # Close images
     #!! cv2.waitKey(0)
     #!! cv2.destroyAllWindows()
 
@@ -86,7 +84,7 @@ def is_integer(string):
 def main():
     global TEXT_TO_FIND, TEXT_INDEX, SLEEP_TIME_SECONDS
 
-    # Szöveg megadása
+    # Specify text
     # if len(sys.argv) > 1:
     #     if is_integer(sys.argv[1]):
     #         SLEEP_TIME_SECONDS = int(sys.argv[1])
@@ -95,7 +93,7 @@ def main():
     #     else:
     #         TEXT_TO_FIND = sys.argv[1:]
     # else:
-    #     print("Nem adtál meg keresett szöveget!")
+    #     print("No text provided!")
     #     # exit()
 
     with open("text.txt", "r") as f:
