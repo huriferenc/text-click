@@ -16,6 +16,8 @@ TEXT_INDEX = 0
 
 
 def detect_text():
+    global TEXT_TO_FIND, TEXT_INDEX
+
     # Get screen resolution
     screen_width, screen_height = pyautogui.size()
 
