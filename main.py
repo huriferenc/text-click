@@ -1,6 +1,7 @@
 '''
 TODO:
-- open app by process id
+- create a desktop app to run app by process id:
+- START/PAUSE button
 '''
 
 import time
