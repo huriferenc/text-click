@@ -1,10 +1,11 @@
-'''
+"""
 TODO:
 - create a desktop app to run app by process id:
 - START/PAUSE button
-'''
+"""
 
 import time
+
 import cv2
 import numpy as np
 import pyautogui
@@ -31,17 +32,21 @@ def detect_text():
     gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
     # Recognize text in the image
-    data = pytesseract.image_to_data(gray_image, output_type='dict')
+    data = pytesseract.image_to_data(gray_image, output_type="dict")
 
-    boxNum = len(data['level'])
+    box_num = len(data["level"])
 
     #!! image_marked = image.copy()
     click_position = (screen_width, screen_height)
     is_found = False
-    for i in range(boxNum):
-        if TEXT_TO_FIND[TEXT_INDEX] in data['text'][i]:
-            (x, y, w, h) = (data['left'][i], data['top']
-                            [i], data['width'][i], data['height'][i])
+    for i in range(box_num):
+        if TEXT_TO_FIND[TEXT_INDEX] in data["text"][i]:
+            (x, y, w, h) = (
+                data["left"][i],
+                data["top"][i],
+                data["width"][i],
+                data["height"][i],
+            )
 
             start = (x, y)
 
@@ -55,7 +60,7 @@ def detect_text():
         pyautogui.click(x=click_position[0], y=click_position[1])
 
     # Next text
-    TEXT_INDEX = (TEXT_INDEX+1) % len(TEXT_TO_FIND)
+    TEXT_INDEX = (TEXT_INDEX + 1) % len(TEXT_TO_FIND)
 
 
 def is_integer(string):
