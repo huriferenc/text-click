@@ -1,20 +1,130 @@
 """
 TODO:
-- create a desktop app to run app by process id:
-- START/PAUSE button
+- 
 """
 
-import time
+import sys
+import tkinter as tk
 
 import cv2
 import numpy as np
 import pyautogui
 import pytesseract
 
-SLEEP_TIME_SECONDS = 30
+CONFIG_FNAME = "config.txt"
 
-TEXT_TO_FIND = []
-TEXT_INDEX = 0
+SLEEP_TIME_SECONDS: int
+TEXT_TO_FIND: list
+TEXT_INDEX: int
+
+root: tk.Tk
+
+play_button: tk.Button
+stop_button: tk.Button
+
+is_playing = False
+
+
+def main():
+    global root, is_playing, play_button, stop_button
+
+    try:
+        init()
+
+        root = tk.Tk()
+
+        window_width = 400
+        window_height = 250
+
+        ###
+        # Centering GUI
+        ###
+        # Gets the coordinates of the center of the screen
+        screen_width = root.winfo_screenwidth()
+        screen_height = root.winfo_screenheight()
+        # Coordinates of the upper left corner of the window to make the window appear in the center
+        x_cordinate = int((screen_width / 2) - (window_width / 2))
+        y_cordinate = int((screen_height / 2) - (window_height / 2))
+        root.geometry(f"{window_width}x{window_height}+{x_cordinate}+{y_cordinate}")
+
+        root.title("Text Clicker")
+
+        play_button = tk.Button(root, text="Play", command=play, width=50, height=3)
+        play_button.place(relx=0.5, rely=0.3, anchor=tk.CENTER)
+
+        stop_button = tk.Button(root, text="Stop", command=stop, width=50, height=3)
+        stop_button.place(relx=0.5, rely=0.6, anchor=tk.CENTER)
+
+        # Detect texts on the screen
+        root.after(SLEEP_TIME_SECONDS, detect_texts)
+
+        root.mainloop()
+    except Exception as e:
+        print(e)
+        sys.exit(1)
+
+
+def init():
+    global CONFIG_FNAME, SLEEP_TIME_SECONDS, TEXT_TO_FIND, TEXT_INDEX
+
+    SLEEP_TIME_SECONDS = 30000  # 30 seconds
+
+    TEXT_TO_FIND = []
+    TEXT_INDEX = 0
+
+    with open(CONFIG_FNAME, "r") as f:
+        line = f.readline().rstrip()
+
+        if is_integer(line):
+            sleep_time = int(line)
+            if sleep_time > 0:
+                SLEEP_TIME_SECONDS = sleep_time * 1000
+            line = f.readline().rstrip()
+
+        while line:
+            if len(line) > 0:
+                TEXT_TO_FIND.append(line)
+
+            line = f.readline().rstrip()
+
+    if len(TEXT_TO_FIND) == 0:
+        raise Exception("No config provided!")
+
+
+def play():
+    global is_playing, play_button
+
+    print("Play")
+
+    is_playing = True
+
+    play_button.configure(text="Pause", command=pause)
+
+
+def pause():
+    global is_playing, play_button
+
+    print("Pause")
+
+    is_playing = False
+
+    play_button.configure(text="Play", command=play)
+
+
+def stop():
+    print("Stop")
+
+    sys.exit(0)
+
+
+def detect_texts():
+    global root, is_playing, SLEEP_TIME_SECONDS
+
+    if is_playing:  # Only do this if the Stop button has not been clicked
+        detect_text()
+
+    # After SLEEP_TIME_SECONDS seconds, call detect_texts again (create a recursive loop)
+    root.after(SLEEP_TIME_SECONDS, detect_texts)
 
 
 def detect_text():
@@ -69,33 +179,6 @@ def is_integer(string):
         return True
     except ValueError:
         return False
-
-
-def main():
-    global TEXT_TO_FIND, TEXT_INDEX, SLEEP_TIME_SECONDS
-
-    with open("text.txt", "r") as f:
-        line = f.readline().rstrip()
-
-        if is_integer(line):
-            sleep_time = int(line)
-            if sleep_time > 0:
-                SLEEP_TIME_SECONDS = sleep_time
-            line = f.readline().rstrip()
-
-        while line:
-            if len(line) > 0:
-                TEXT_TO_FIND.append(line)
-
-            line = f.readline().rstrip()
-
-    if len(TEXT_TO_FIND) == 0:
-        print("No text provided!")
-        return
-
-    while True:
-        detect_text()
-        time.sleep(SLEEP_TIME_SECONDS)  # Sleep for X seconds
 
 
 if __name__ == "__main__":
