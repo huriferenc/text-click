@@ -1,6 +1,6 @@
 """
 TODO:
-- 
+-
 """
 
 import sys
@@ -15,7 +15,7 @@ CONFIG_FNAME = "config.txt"
 
 SLEEP_TIME_SECONDS: int
 TEXT_TO_FIND: list
-TEXT_INDEX: int
+TEXT_INDEX = 0
 
 root: tk.Tk
 
@@ -29,7 +29,7 @@ def main():
     global root, is_playing, play_button, stop_button
 
     try:
-        init()
+        get_config()
 
         root = tk.Tk()
 
@@ -64,13 +64,12 @@ def main():
         sys.exit(1)
 
 
-def init():
-    global CONFIG_FNAME, SLEEP_TIME_SECONDS, TEXT_TO_FIND, TEXT_INDEX
+def get_config():
+    global CONFIG_FNAME, SLEEP_TIME_SECONDS, TEXT_TO_FIND
 
     SLEEP_TIME_SECONDS = 30000  # 30 seconds
 
     TEXT_TO_FIND = []
-    TEXT_INDEX = 0
 
     with open(CONFIG_FNAME, "r") as f:
         line = f.readline().rstrip()
@@ -121,6 +120,7 @@ def detect_texts():
     global root, is_playing, SLEEP_TIME_SECONDS
 
     if is_playing:  # Only do this if the Stop button has not been clicked
+        get_config()
         detect_text()
 
     # After SLEEP_TIME_SECONDS seconds, call detect_texts again (create a recursive loop)
@@ -150,8 +150,8 @@ def detect_text():
     click_position = (screen_width, screen_height)
     is_found = False
     for i in range(box_num):
-        if TEXT_TO_FIND[TEXT_INDEX] in data["text"][i]:
-            (x, y, w, h) = (
+        if TEXT_TO_FIND[TEXT_INDEX % len(TEXT_TO_FIND)] in data["text"][i]:
+            x, y, w, h = (
                 data["left"][i],
                 data["top"][i],
                 data["width"][i],
